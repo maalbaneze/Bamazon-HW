@@ -18,43 +18,83 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
-    buy();
+    //console.log("connected as id " + connection.threadId + "\n");
 });
 
-function buy() {
-    console.log("Inserting a new bid...\n");
-    var query = connection.query(
-        "INSERT INTO bids_items SET ?",
-        {
-            name: "",
-            price: [],
-            quantity: []
-        },
-        function (err, res) {
-            console.log(res.affectedRows + " bid inserted!\n");
-            // Call updateBid AFTER the INSERT completes
-            updateStock();
-        }
-    );
-    // logs the actual query being run
-    console.log(query.sql);
-}
-function updateStock() {
-    console.log("Updating all Rocky Road quantities...\n");
-    var query = connection.query(
-        "UPDATE bids_items SET ? WHERE ?",
-        [
+var display = function () {
+    connection.query("SELECT * FROM products", function (err, results) {
+        if (err) throw err;
+        //show table of items available for purchase
+        console.table(results);
+    })
+};
+
+var buy = function () {
+    // query the database for all products available for purchase
+    connection.query("SELECT * FROM products", function (err, results) {
+        if (err) throw err;
+        // once you have the products, prompt the user for which they'd like to purchase
+        inquirer.prompt([
             {
-                price: []
+                name: "product",
+                type: "list",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < results.length; i++) {
+                        choiceArray.push(results[i].product_name);
+                    }
+                    return choiceArray;
+                },
+                message: "What product (by ID) would you like to purchase?"
             },
             {
-                name: ""
+                name: "amount",
+                type: "input",
+                message: "How many would you like to purchase?"
             }
-        ],
-        function (err, res) {
-            console.log(res.affectedRows + " bids_items updated!\n");
-            // Call deleteBid AFTER the UPDATE completes
-            deleteBid();
-        }
-    );
+        ]).then(function (answer) {
+            var chosenProduct;
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].product_name === answer.product) {
+                    chosenProduct = results[i];
+                }
+            }
+
+            if (chosenProduct.stock_quantity > parseInt(answer.amount)) {
+                connection.query("UPDATE products SET ? WHERE ?", [
+                    {
+                        stock_quantity: chosenProduct.stock_quantity - parseInt(answer.amount)
+                    },
+                    {
+                        id: chosenProduct.id
+                    }], function (error) {
+                        if (error) throw err;
+                        console.log("\n\n");
+                        console.log("==============================================");
+                        console.log("Product purchased successfully!");
+                        console.log("==============================================");
+                        console.log("Purchase Summary");
+                        console.log("-----------------------------");
+                        console.log("Item Name: " + chosenProduct.product_name);
+                        console.log("Item Count: " + parseInt(answer.amount));
+                        console.log("-----------------------------");
+                        console.log("Total: " + "$" + (chosenProduct.price * parseInt(answer.amount)));
+                        console.log("==============================================");
+                        console.log("\n\n");
+                        display();
+                        buy();
+                    })
+            } else {
+                console.log("==============================================");
+                console.log("Insufficient quantity!");
+                console.log("==============================================");
+                display();
+                buy();
+            }
+        });
+    });
+};
+
+display();
+buy();
+

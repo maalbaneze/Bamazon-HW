@@ -8,4 +8,4 @@ The below screen shot shows the product list a table with items available for pu
 <img width="919" alt="Screen Shot 2019-04-02 at 7 49 25 AM" src="https://user-images.githubusercontent.com/47362473/55412592-97754100-551c-11e9-9e18-ce0a7fe913fb.png">
 
 This second screen shot shows the customer has selected two watches for purchase, they are avaialable so the purchase is made and the inventory of watches is reduced by the purchase amount (100 - 2 = 98).
-<img width="919" alt="Screen Shot 2019-04-02 at 8 44 39 AM" src="https://user-images.githubusercontent.com/47362473/55416793-51bc7680-5524-11e9-8ccb-a2a27afb8aba.png">
+<img width="919" alt="Screen Shot 2019-04-02 at 8 51 20 AM" src="https://user-images.githubusercontent.com/47362473/55416915-89c3b980-5524-11e9-889a-710c136e1453.png">

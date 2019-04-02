@@ -9,12 +9,12 @@ CREATE TABLE products
   item_id INT NOT NULL
   AUTO_INCREMENT,
   product_name VARCHAR
-  (45) NULL,
+  (45) NOT NULL,
   department_name VARCHAR
-  (45),
+  (45) NOT NULL,
   price DECIMAL
-  (10,2) NULL,
-  stock_quantity INT NULL,
+  (10,2) DEFAULT 0,
+  stock_quantity INT DEFAULT 0,
   PRIMARY KEY
   (item_id)
 );

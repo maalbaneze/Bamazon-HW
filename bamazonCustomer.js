@@ -5,35 +5,36 @@ var mysql = require("mysql");
 var connection = mysql.createConnection({
     host: "localhost",
 
-    // Your port; if not 3306
+    // Port; if not 3306
     port: 3306,
 
-    // Your username
+    // Username, which is root for these exercises
     user: "root",
 
-    // Your password (none here)
+    // Password (none here)
     password: "",
     database: "bamazon_db"
 });
 
+// Make connection
 connection.connect(function (err) {
     if (err) throw err;
-    //console.log("connected as id " + connection.threadId + "\n");
+    console.log("connected as id " + connection.threadId + "\n");
 });
 
 var display = function () {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-        //show table of items available for purchase
+        // Show items available for purchase in a table
         console.table(results);
     })
 };
 
 var buy = function () {
-    // query the database for all products available for purchase
+    // Query the database for all products available for purchase
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-        // once you have the products, prompt the user for which they'd like to purchase
+        // With the product list shown, prompt user with a purchase request
         inquirer.prompt([
             {
                 name: "product",
@@ -45,7 +46,7 @@ var buy = function () {
                     }
                     return choiceArray;
                 },
-                message: "What product (by ID) would you like to purchase?"
+                message: "What product would you like to purchase?"
             },
             {
                 name: "amount",
@@ -66,7 +67,7 @@ var buy = function () {
                         stock_quantity: chosenProduct.stock_quantity - parseInt(answer.amount)
                     },
                     {
-                        id: chosenProduct.id
+                        item_id: chosenProduct.item_id
                     }], function (error) {
                         if (error) throw err;
                         console.log("\n\n");
@@ -95,6 +96,7 @@ var buy = function () {
     });
 };
 
+// Function calls
 display();
 buy();
 
